@@ -7,7 +7,6 @@ namespace Microsoft.PWABuilder.Oculus.Controllers
     [Route("[controller]")]
     public class APKController : ControllerBase
     {
-        //private readonly ILogger<APKController> logger;
         [HttpPost]
         public string GenerateZip(OculusAppPackageOptions options)
         {
@@ -16,8 +15,6 @@ namespace Microsoft.PWABuilder.Oculus.Controllers
 
         private string CreateAppPackage(OculusAppPackageOptions options)
         {
-            //logger.LogInformation("Generating app package for {url} using {options}", options.Url, options);
-
             return "This API was called";
         }
     }
