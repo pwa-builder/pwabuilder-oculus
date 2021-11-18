@@ -1,5 +1,6 @@
 .user
 .suo
+.vs
 /bin
 /obj
 /Microsoft.PWABuilder.Oculus/bin
