@@ -26,7 +26,7 @@ namespace Microsoft.PWABuilder.Oculus.Services
         {
             // Run the Oculus CLI tool.
             // TODO: implement this. See Oculus PWA Getting Started.pdf.
-            var result = await procRunner.Run(appSettings.OculusCliPath, "Oculus command line args go here");
+            var result = await procRunner.Run(appSettings.OculusCliPath, "Oculus command line args go here", TimeSpan.FromMinutes(5));
 
             return new OculusCliResult
             {
