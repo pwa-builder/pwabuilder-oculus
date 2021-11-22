@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.PWABuilder.Oculus.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,10 +17,13 @@ namespace Microsoft.PWABuilder.Oculus.Services
         private readonly List<string> directoriesToCleanUp = new();
         private readonly List<string> filesToCleanUp = new();
         private readonly ILogger<TempDirectory> logger;
-        private const string outputDirectory = "%temp%";
+        private readonly AppSettings appSettings;
 
-        public TempDirectory(ILogger<TempDirectory> logger)
+        public TempDirectory(
+            IOptions<AppSettings> appSettings,
+            ILogger<TempDirectory> logger)
         {
+            this.appSettings = appSettings.Value;
             this.logger = logger;
         }
 
@@ -30,7 +34,7 @@ namespace Microsoft.PWABuilder.Oculus.Services
         /// <returns>The path to the temporary directory.</returns>
         public string CreateDirectory(string? dirName = null)
         {
-            var expandedOutputDir = Environment.ExpandEnvironmentVariables(outputDirectory);
+            var expandedOutputDir = Environment.ExpandEnvironmentVariables(this.appSettings.TempDirectory);
             if (string.IsNullOrEmpty(dirName))
             {
                 dirName = Guid.NewGuid().ToString();
@@ -48,7 +52,7 @@ namespace Microsoft.PWABuilder.Oculus.Services
         public string CreateFile()
         {
             // Make sure the output directory exists
-            var expandedOutputDir = Environment.ExpandEnvironmentVariables(outputDirectory);
+            var expandedOutputDir = Environment.ExpandEnvironmentVariables(this.appSettings.TempDirectory);
             Directory.CreateDirectory(expandedOutputDir);
 
             var tempFileName = Path.Combine(expandedOutputDir, Guid.NewGuid().ToString() + ".tmp");

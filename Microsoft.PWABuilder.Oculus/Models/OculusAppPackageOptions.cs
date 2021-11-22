@@ -1,42 +1,87 @@
 ﻿namespace Microsoft.PWABuilder.Oculus.Models
 {
+    /// <summary>
+    /// Options for generating an Oculus app package.
+    /// </summary>
     public class OculusAppPackageOptions
     {
+        /// <summary>
+        /// The Oculus app ID. 
+        /// </summary>
+        public string? AppId { get; set; }
 
         /// <summary>
-        /// Represents the name of the web application as it is usually displayed to the user
+        /// The app name. 
         /// </summary>
-        public string Name { get; set; } = string.Empty;
+        public string? Name { get; set; }
 
         /// <summary>
-        /// Determines the developers’ preferred display mode for the website. Only "standalone" or "minimal-ui" are accepted. (Setting standalone as default)
+        /// The URL of the PWA.
         /// </summary>
-        public string Display { get; set; } = "standalone";
+        public string? Url { get; set; }
 
         /// <summary>
-        /// Represents the name of the web application displayed to the user if there is not enough space to display name.
+        /// The app version.
         /// </summary>
-        public string? ShortName { get; set; }
+        public string? Version { get; set; }
 
         /// <summary>
-        /// Defines the navigation scope of this web application's application context. It restricts what web pages can be viewed while the manifest is applied. If the user navigates outside the scope, it reverts to a normal web page inside a browser tab or window.
+        /// The URL of the PWA's web app manifest.
         /// </summary>
-        public string? Scope { get; set; }
+        public string? ManifestUrl { get; set; }
 
         /// <summary>
-        /// Represents the start URL of the web application — the preferred URL that should be loaded when the user launches the web application.
+        /// The contents of the web app manifest.
         /// </summary>
-        public string? StartUrl { get; set; }
+        public WebAppManifest? Manifest { get; set; }
 
         /// <summary>
-        /// If true, this boolean field will give your PWA a tab bar similar to Oculus Browser
+        /// Validates the package options. If valid, a <see cref="Validated"/> instance is returned. Otherwise, an exception is thrown.
         /// </summary>
-        public bool? OvrMultiTabEnabled { get; set; }
+        /// <returns>A validated options instance.</returns>
+        public Validated Validate()
+        {
+            if (string.IsNullOrWhiteSpace(AppId))
+            {
+                throw new ArgumentNullException(nameof(AppId));
+            }
 
-        /// <summary>
-        /// Allows your PWA to include more web pages within the scope of your web application. Consists of a JSON dictionary containing extension URLs or wildcard patterns.
-        /// </summary>
-        public string? OvrScopeExtensions { get; set; }
+            if (string.IsNullOrWhiteSpace(Name))
+            {
+                throw new ArgumentNullException(nameof(Name));
+            }
 
+            if (Name.Length < 3)
+            {
+                throw new ArgumentOutOfRangeException(nameof(Name), Name.Length, "Name must be at least 3 characters in length.");
+            }
+
+            if (!System.Version.TryParse(Version, out var version))
+            {
+                throw new ArgumentException("Version must be a valid version string, e.g. '1.0.0.0'", nameof(Version));
+            }
+
+            if (!Uri.TryCreate(Url, UriKind.Absolute, out var uri))
+            {
+                throw new ArgumentException("Url must be a valid, absolute URL", nameof(Url));
+            }
+
+            if (!Uri.TryCreate(ManifestUrl, UriKind.Absolute, out var manifestUri))
+            {
+                throw new ArgumentException("Manifest URL must be a valid, absolute URL", nameof(ManifestUrl));
+            }
+
+            ArgumentNullException.ThrowIfNull(Manifest);
+
+            return new Validated(AppId, Name, uri, version, manifestUri, Manifest);
+        }
+
+        public record Validated(
+            string AppId, 
+            string Name, 
+            Uri Uri, 
+            Version Version, 
+            Uri manifestUri, 
+            WebAppManifest Manifest);
     }
 }
