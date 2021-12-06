@@ -5,3 +5,10 @@
 /obj
 /Microsoft.PWABuilder.Oculus/bin
 /Microsoft.PWABuilder.Oculus/obj
+/Microsoft.PWABuilder.Oculus/Resources/cli/output
+/Microsoft.PWABuilder.Oculus/Resources/cli/output.apk
+/Microsoft.PWABuilder.Oculus/Resources/cli/output.zip
+/Microsoft.PWABuilder.Oculus/Resources/cli/output.apk.idsig
+/Microsoft.PWABuilder.Oculus/Resources/sdk
+/Microsoft.PWABuilder.Oculus/output.apk
+/Microsoft.PWABuilder.Oculus/output.apk.idsig
