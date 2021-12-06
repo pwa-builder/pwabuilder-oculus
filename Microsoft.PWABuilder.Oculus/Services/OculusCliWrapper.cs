@@ -56,14 +56,14 @@ namespace Microsoft.PWABuilder.Oculus.Services
         /// Creates command line arguments for the pwa_builder.exe command line tool from the specified options.
         /// </summary>
         /// <returns></returns>
-        protected virtual string CreateCommandLineArgs(OculusAppPackageOptions.Validated options, string outputDirectory, string filePath)
+        protected virtual string CreateCommandLineArgs(OculusAppPackageOptions.Validated options, string outputDirectory, string manifestFilePath)
         {
             var args = new Dictionary<string, string?>
             {
                 { "create-pwa","" },
                 { "out", Path.Combine(outputDirectory, "output.apk").ToString() },
                 { "android-sdk", appSettings.AndroidSdkPath },
-                { "manifest-content-file", filePath},
+                { "manifest-content-file", manifestFilePath},
                 { "web-manifest-url", options.manifestUri.ToString() },            
             };
 
