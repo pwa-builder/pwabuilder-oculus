@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using Microsoft.PWABuilder.Oculus.Models;
+using System.IO.Compression;
+using System.Text.Json;
 
 namespace Microsoft.PWABuilder.Oculus.Services
 {
@@ -35,19 +37,40 @@ namespace Microsoft.PWABuilder.Oculus.Services
             // Create our temporary output directory.
             var outputDirectory = temp.CreateDirectory();
 
+            var filePath = await CreateManifestFile(packageOptions, outputDirectory);
+
             // Run the Oculus CLI.
-            var oculusCliResult = await oculusCli.CreateApk(packageOptions, outputDirectory);
+            var oculusCliResult = await oculusCli.CreateApk(packageOptions, outputDirectory, filePath);
 
             // Zip up the APK and the readme doc.
-            var zipFilePath = CreateZipPackage(oculusCliResult.ApkFilePath, this.appSettings.ReadMePath);
+            var zipFilePath = CreateZipPackage(oculusCliResult.ApkFilePath, this.appSettings.ReadMePath, outputDirectory);
 
             return zipFilePath;
         }
 
-        private string CreateZipPackage(string apkFilePath, string readmeFilePath)
+
+        /// <summary>
+        /// Creates manifest file from specified options
+        /// </summary>
+        /// <returns></returns>
+        protected virtual async Task<string> CreateManifestFile(OculusAppPackageOptions.Validated options, string outputDirectory)
         {
+            var jsonString = JsonSerializer.Serialize(options.Manifest);
+            var filePath = Path.Combine(outputDirectory, "pwa.json");
+            await File.WriteAllTextAsync(filePath, jsonString);
+            return filePath;
+        }
+
+        private string CreateZipPackage(string apkFilePath, string readmeFilePath, string outputDirectory)
+        {
+            var zipPath = Path.Combine(outputDirectory, "output.zip");
+            using var zipFile = File.Create(zipPath);
+            using var zipArchive = new ZipArchive(zipFile, ZipArchiveMode.Create);
+            zipArchive.CreateEntryFromFile(apkFilePath, "output.apk");
+            zipArchive.CreateEntryFromFile(readmeFilePath, "readme.md");
+
             // TODO: Create a new zip file containing the APK and our readme
-            throw new NotImplementedException();
+            return zipPath;
         }
     }
 }
