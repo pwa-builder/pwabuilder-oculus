@@ -30,41 +30,64 @@ namespace Microsoft.PWABuilder.Oculus.Services
         public async Task<OculusCliResult> CreateApk(OculusAppPackageOptions.Validated packageOptions, string outputDirectory, string manifestFilePath)
         {
             // Run the Oculus CLI tool.
-            // TODO: implement this. See Oculus PWA Getting Started.pdf.
-
             ProcessResult procResult;
-
+            var apkPath = Path.Combine(outputDirectory, "output.apk");
             try
             {
-                procResult = await procRunner.Run(appSettings.OculusCliPath, CreateCommandLineArgs(packageOptions, outputDirectory, manifestFilePath), TimeSpan.FromMinutes(5));
+                var processArgs = CreateCommandLineArgs(packageOptions, apkPath, manifestFilePath);
+                procResult = await procRunner.Run(appSettings.OculusCliPath, processArgs, TimeSpan.FromMinutes(5));
+            }
+            catch (ProcessException procError)
+            {
+                logger.LogError(procError, "Oculus CLI encountered an error. Standard error: {stdErr}{newLine}Standard out:{stdOut}", procError.StandardError, Environment.NewLine + Environment.NewLine, procError.StandardOutput);
+                throw;
             }
             catch (Exception error)
             {
-                var stdOut = (error as ProcessException)?.StandardOutput;
-                var stdErr = (error as ProcessException)?.StandardError;
-                //TODO Add Custom Exception class
-                throw new Exception(stdErr);
+                logger.LogError(error, "Oculus CLI encountered an error.");
+                throw;
             }
+
+            // Log success. Warn if we have any standard error output.
+            logger.LogInformation("Oculus CLI process completed successfully. Output: {stdOutput}", procResult.StandardOutput);
+            if (!string.IsNullOrEmpty(procResult.StandardError))
+            {
+                logger.LogWarning("Oculus CLI process completed successfully but output error information. {stdError}", procResult.StandardError);
+            }
+
+            // Ensure we have the APK. We've seen scenarios where the Oculus CLI says it succeeded, but in fact no APK was generated.
+            if (!File.Exists(apkPath))
+            {
+                var error = new Exception("Oculus CLI claimed it finished successfully, but it didn't produce an APK.");
+                error.Data.Add("Standard Error", procResult.StandardError);
+                error.Data.Add("Standard Out", procResult.StandardOutput);
+                logger.LogError(error, "Oculus CLI claimed it finished successfully, but it didn't produce an APK. Standard error: {stdError}{newLine}Standard output: {stdOutput}", procResult.StandardError, Environment.NewLine + Environment.NewLine, procResult.StandardOutput);
+                throw error;                
+            }
+
             return new OculusCliResult
             {
-                ApkFilePath = Path.Combine(outputDirectory, "output.apk"), // TODO: implement this
+                ApkFilePath = apkPath
             };
         }
 
-
         /// <summary>
-        /// Creates command line arguments for the pwa_builder.exe command line tool from the specified options.
+        /// Creates command line arguments for the Oculus command line tool (ovr-platform-util.exe) from the specified options.
         /// </summary>
-        /// <returns></returns>
-        protected virtual string CreateCommandLineArgs(OculusAppPackageOptions.Validated options, string outputDirectory, string manifestFilePath)
+        /// <param name="manifestFilePath">The path to the manifest file on disk.</param>
+        /// <param name="apkOutputFilePath">The desired file path of the generated APK.</param>
+        /// <param name="options">The Oculus package creation options.</param>
+        /// <returns>The command line arguments for the Oculus CLI.</returns>
+        protected virtual string CreateCommandLineArgs(OculusAppPackageOptions.Validated options, string apkOutputFilePath, string manifestFilePath)
         {
             var args = new Dictionary<string, string?>
             {
-                { "create-pwa","" },
-                { "out", Path.Combine(outputDirectory, "output.apk").ToString() },
+                { "create-pwa", string.Empty },
+                { "out", apkOutputFilePath },
                 { "android-sdk", appSettings.AndroidSdkPath },
-                { "manifest-content-file", manifestFilePath},
-                { "web-manifest-url", options.manifestUri.ToString() },            
+                { "manifest-content-file", manifestFilePath },
+                { "web-manifest-url", options.ManifestUri.ToString() },
+                { "package-name", options.AppId }
             };
 
             var builder = new StringBuilder();

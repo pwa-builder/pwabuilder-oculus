@@ -43,7 +43,7 @@ namespace Microsoft.PWABuilder.Oculus.Services
             var oculusCliResult = await oculusCli.CreateApk(packageOptions, outputDirectory, filePath);
 
             // Zip up the APK and the readme doc.
-            var zipFilePath = CreateZipPackage(oculusCliResult.ApkFilePath, this.appSettings.ReadMePath, outputDirectory);
+            var zipFilePath = CreateZipPackage(oculusCliResult.ApkFilePath, this.appSettings.ReadMePath, packageOptions.Name, outputDirectory);
 
             return zipFilePath;
         }
@@ -61,16 +61,23 @@ namespace Microsoft.PWABuilder.Oculus.Services
             return filePath;
         }
 
-        private string CreateZipPackage(string apkFilePath, string readmeFilePath, string outputDirectory)
+        private string CreateZipPackage(string apkFilePath, string readmeFilePath, string appName, string outputDirectory)
         {
             var zipPath = Path.Combine(outputDirectory, "output.zip");
             using var zipFile = File.Create(zipPath);
             using var zipArchive = new ZipArchive(zipFile, ZipArchiveMode.Create);
-            zipArchive.CreateEntryFromFile(apkFilePath, "output.apk");
-            zipArchive.CreateEntryFromFile(readmeFilePath, "readme.md");
-
-            // TODO: Create a new zip file containing the APK and our readme
+            zipArchive.CreateEntryFromFile(apkFilePath, $"{GetFileSystemSafeAppName(appName)}.apk");
+            zipArchive.CreateEntryFromFile(readmeFilePath, "readme.html");
             return zipPath;
+        }
+
+        private string GetFileSystemSafeAppName(string appName)
+        {
+            var invalidChars = Path.GetInvalidFileNameChars();
+            var validAppNameChars = appName
+                .Select(c => invalidChars.Contains(c) ? '_' : c)
+                .ToArray();
+            return new string(validAppNameChars);            
         }
     }
 }

@@ -21,7 +21,7 @@ namespace Microsoft.PWABuilder.Oculus.Controllers
             var validatedOptions = options.Validate();
             var zipFilePath = await packageCreator.Create(validatedOptions);
             var downloadFileName = $"{validatedOptions.Name}.zip";
-            return File(zipFilePath, "application/zip", downloadFileName);
+            return File(System.IO.File.OpenRead(zipFilePath), "application/zip", downloadFileName);
         }
     }
        

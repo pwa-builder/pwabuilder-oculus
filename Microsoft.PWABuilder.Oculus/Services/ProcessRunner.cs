@@ -78,6 +78,8 @@ namespace Microsoft.PWABuilder.Oculus.Services
             {
                 var toolFailedError = CreateCliError($"The {processFileName} process exited with exit code {cliProc.ExitCode}.", cliOutput, cliErrorOutput, processPath, processArgs);
                 toolFailedError.Data.Add("exitCode", cliProc.ExitCode);
+                toolFailedError.Data.Add("standardError", cliErrorOutput);
+                toolFailedError.Data.Add("standardOutput", cliOutput);
                 throw toolFailedError;
             }
 

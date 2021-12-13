@@ -4,9 +4,11 @@ This is PWABuilder's Oculus platform. It's used by PWABuilder to generate Oculus
 
 ### Running locally
 
-Open the Microsoft.PWABuilder.Oculus.sln in Visual Studio 2022. Hit F5 to run the web app.
+Open the Microsoft.PWABuilder.Oculus.sln in Visual Studio 2022. Hit F5 to run the web app. It will launch https://localhost:7115.
 
-To test the package generation, POST to `/api/package/create` with the following JSON body:
+To test the package generation, load `/`, and it will show a page where you can test the service.
+
+Alternately, you can POST to `/api/package/create` with the following JSON body:
 
 ```json
 {

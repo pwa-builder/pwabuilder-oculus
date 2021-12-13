@@ -81,7 +81,7 @@
             string Name, 
             Uri Uri, 
             Version Version, 
-            Uri manifestUri, 
+            Uri ManifestUri, 
             WebAppManifest Manifest);
     }
 }
