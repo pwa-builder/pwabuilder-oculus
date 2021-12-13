@@ -21,9 +21,9 @@
         public string? Url { get; set; }
 
         /// <summary>
-        /// The app version.
+        /// The app version code.
         /// </summary>
-        public string? Version { get; set; }
+        public int? VersionCode { get; set; }
 
         /// <summary>
         /// The URL of the PWA's web app manifest.
@@ -34,6 +34,11 @@
         /// The contents of the web app manifest.
         /// </summary>
         public WebAppManifest? Manifest { get; set; }
+
+        /// <summary>
+        /// The signing key info. If omitted, a new key will be generated and used to sign the APK.
+        /// </summary>
+        public SigningKeyInfo? SigningKey { get; set; }
 
         /// <summary>
         /// Validates the package options. If valid, a <see cref="Validated"/> instance is returned. Otherwise, an exception is thrown.
@@ -56,9 +61,9 @@
                 throw new ArgumentOutOfRangeException(nameof(Name), Name.Length, "Name must be at least 3 characters in length.");
             }
 
-            if (!System.Version.TryParse(Version, out var version))
+            if (VersionCode <= 0 || VersionCode == null)
             {
-                throw new ArgumentException("Version must be a valid version string, e.g. '1.0.0.0'", nameof(Version));
+                throw new ArgumentOutOfRangeException(nameof(VersionCode), VersionCode, "Version code must be greater than zero");
             }
 
             if (!Uri.TryCreate(Url, UriKind.Absolute, out var uri))
@@ -72,16 +77,17 @@
             }
 
             ArgumentNullException.ThrowIfNull(Manifest);
-
-            return new Validated(AppId, Name, uri, version, manifestUri, Manifest);
+            var validSigningKey = SigningKey?.Validate();
+            return new Validated(AppId, Name, uri, VersionCode.Value, manifestUri, Manifest, validSigningKey);
         }
 
         public record Validated(
             string AppId, 
             string Name, 
             Uri Uri, 
-            Version Version, 
+            int VersionCode, 
             Uri ManifestUri, 
-            WebAppManifest Manifest);
+            WebAppManifest Manifest,
+            SigningKeyInfo.Validated? SigningKey);
     }
 }

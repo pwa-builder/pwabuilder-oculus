@@ -34,7 +34,8 @@ namespace Microsoft.PWABuilder.Oculus.Services
             var apkPath = Path.Combine(outputDirectory, "output.apk");
             try
             {
-                var processArgs = CreateCommandLineArgs(packageOptions, apkPath, manifestFilePath);
+                var signingKeyFilePath = await WriteSigningKeyToDisk(packageOptions, outputDirectory);
+                var processArgs = CreateCommandLineArgs(packageOptions, apkPath, signingKeyFilePath, manifestFilePath);
                 procResult = await procRunner.Run(appSettings.OculusCliPath, processArgs, TimeSpan.FromMinutes(5));
             }
             catch (ProcessException procError)
@@ -71,14 +72,54 @@ namespace Microsoft.PWABuilder.Oculus.Services
             };
         }
 
+        private async Task<string?> WriteSigningKeyToDisk(OculusAppPackageOptions.Validated packageOptions, string outputDirectory)
+        {
+            // No signing key options? Then we have nothing to write to disk.
+            if (packageOptions.SigningKey == null)
+            {
+                return null;
+            }
+
+            // Don't have a key store file? Nothing to write to disk.
+            if (string.IsNullOrWhiteSpace(packageOptions.SigningKey.KeyStoreFile))
+            {
+                return null;
+            }
+
+            // If we're configured to skip signing, we have nothing to write to disk.
+            if (packageOptions.SigningKey.SkipSigning)
+            {
+                return null;
+            }
+
+            // OK, we have a key file. Let's write it to disk.
+            var keyStorePath = Path.Combine(outputDirectory, $"{Guid.NewGuid()}.keystore");
+            try
+            {
+                var keyStoreBytes = Convert.FromBase64String(packageOptions.SigningKey.KeyStoreFile);
+                await File.WriteAllBytesAsync(keyStorePath, keyStoreBytes);
+                return keyStorePath;
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error, "Error creating key store file for PWA {name} at {url}", packageOptions.Name, packageOptions.Uri);
+                throw;
+            }
+        }
+
         /// <summary>
         /// Creates command line arguments for the Oculus command line tool (ovr-platform-util.exe) from the specified options.
         /// </summary>
         /// <param name="manifestFilePath">The path to the manifest file on disk.</param>
         /// <param name="apkOutputFilePath">The desired file path of the generated APK.</param>
+        /// <param name="signingKeyFilePath">The file path to the signing .keystore file. This will be null if no signing key is required.</param>
         /// <param name="options">The Oculus package creation options.</param>
         /// <returns>The command line arguments for the Oculus CLI.</returns>
-        protected virtual string CreateCommandLineArgs(OculusAppPackageOptions.Validated options, string apkOutputFilePath, string manifestFilePath)
+        protected virtual string CreateCommandLineArgs(
+            OculusAppPackageOptions.Validated options, 
+            string apkOutputFilePath, 
+            string? signingKeyFilePath,
+            string manifestFilePath)
         {
             var args = new Dictionary<string, string?>
             {
@@ -87,11 +128,26 @@ namespace Microsoft.PWABuilder.Oculus.Services
                 { "android-sdk", appSettings.AndroidSdkPath },
                 { "manifest-content-file", manifestFilePath },
                 { "web-manifest-url", options.ManifestUri.ToString() },
-                { "package-name", options.AppId }
+                { "package-anem", options.Name },
+                { "app-id", options.AppId }
             };
 
-            var builder = new StringBuilder();
+            // Generate a bare APK if we're instructed to do so.
+            if (options.SigningKey?.SkipSigning == true)
+            {
+                args.Add("skip-sign", string.Empty);
+            }
 
+            // Append signing key information if we've been supplied with one.
+            if (options.SigningKey != null && !string.IsNullOrEmpty(signingKeyFilePath))
+            {
+                args.Add("keystore", signingKeyFilePath);
+                args.Add("ks-pass", options.SigningKey.StorePassword);
+                args.Add("ks-key-alias", options.SigningKey.Alias);
+                args.Add("key-pass", options.SigningKey.Password);
+            }
+
+            var builder = new StringBuilder();
             foreach (var arg in args)
             {
                 if (!string.IsNullOrWhiteSpace(arg.Value))
