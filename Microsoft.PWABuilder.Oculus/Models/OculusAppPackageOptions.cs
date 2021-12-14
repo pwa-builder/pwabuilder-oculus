@@ -16,11 +16,6 @@
         public string? Name { get; set; }
 
         /// <summary>
-        /// The URL of the PWA.
-        /// </summary>
-        public string? Url { get; set; }
-
-        /// <summary>
         /// The app version code.
         /// </summary>
         public int? VersionCode { get; set; }
@@ -66,11 +61,6 @@
                 throw new ArgumentOutOfRangeException(nameof(VersionCode), VersionCode, "Version code must be greater than zero");
             }
 
-            if (!Uri.TryCreate(Url, UriKind.Absolute, out var uri))
-            {
-                throw new ArgumentException("Url must be a valid, absolute URL", nameof(Url));
-            }
-
             if (!Uri.TryCreate(ManifestUrl, UriKind.Absolute, out var manifestUri))
             {
                 throw new ArgumentException("Manifest URL must be a valid, absolute URL", nameof(ManifestUrl));
@@ -78,13 +68,12 @@
 
             ArgumentNullException.ThrowIfNull(Manifest);
             var validSigningKey = SigningKey?.Validate();
-            return new Validated(PackageName, Name, uri, VersionCode.Value, manifestUri, Manifest, validSigningKey);
+            return new Validated(PackageName, Name, VersionCode.Value, manifestUri, Manifest, validSigningKey);
         }
 
         public record Validated(
             string PackageName, 
             string Name, 
-            Uri Uri, 
             int VersionCode, 
             Uri ManifestUri, 
             WebAppManifest Manifest,

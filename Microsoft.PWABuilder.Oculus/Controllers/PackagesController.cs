@@ -6,11 +6,11 @@ namespace Microsoft.PWABuilder.Oculus.Controllers
 {
     [ApiController]
     [Route("[controller]/[action]")]
-    public class PackageController : ControllerBase
+    public class PackagesController : ControllerBase
     {
         private readonly OculusPackageCreator packageCreator;
 
-        public PackageController(OculusPackageCreator packageCreator)
+        public PackagesController(OculusPackageCreator packageCreator)
         {
             this.packageCreator = packageCreator;
         }

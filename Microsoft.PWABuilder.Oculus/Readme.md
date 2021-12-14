@@ -8,15 +8,21 @@ Open the Microsoft.PWABuilder.Oculus.sln in Visual Studio 2022. Hit F5 to run th
 
 To test the package generation, load `/`, and it will show a page where you can test the service.
 
-Alternately, you can POST to `/api/package/create` with the following JSON body:
+Alternately, you can POST to `/api/packages/create` with the following JSON body:
 
 ```json
 {
 	"packageName": "com.sadchonks",
 	"name": "Sad Chonks",
-	"url": "https://sadchonks.com",
 	"versionCode": 1,
 	"manifestUrl": "https://sadchonks.com/manifest.json",
+    "signingKey": { // Or null to generate a new signing key and sign the APK with it
+        "skipSigning": false, // true to generate an unsigned APK
+        "keyStoreFile": null, // or base64-encoded string of your existing .keystore file
+        "storePassword": "", 
+        "alias": "",
+        "password": ""
+    },
 	"manifest": {
       "short_name": "Chonks",
       "name": "Sad Chonks",

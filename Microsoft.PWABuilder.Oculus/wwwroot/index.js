@@ -18,7 +18,6 @@ function getSimpleJson() {
     return {
         "packageName": "com.webboard",
         "name": "WebBoard",
-        "url": "https://webboard.app",
         "versionCode": 1,
         "manifestUrl": "https://webboard.app/manifest.json",
         "manifest": getManifest()
@@ -100,7 +99,7 @@ async function submit() {
     try {
         // Convert the JSON to an object and back to a string to ensure proper formatting.
         const options = JSON.stringify(JSON.parse(codeArea.value));
-        const response = await fetch("/package/create", {
+        const response = await fetch("/packages/create", {
             method: "POST",
             body: options,
             headers: new Headers({ 'content-type': 'application/json' }),

@@ -102,7 +102,7 @@ namespace Microsoft.PWABuilder.Oculus.Services
             }
             catch (Exception error)
             {
-                logger.LogError(error, "Error creating key store file for PWA {name} at {url}", packageOptions.Name, packageOptions.Uri);
+                logger.LogError(error, "Error creating key store file for PWA {name} at {url}", packageOptions.Name, packageOptions.ManifestUri);
                 throw;
             }
         }
@@ -129,7 +129,7 @@ namespace Microsoft.PWABuilder.Oculus.Services
                 { "manifest-content-file", manifestFilePath },
                 { "web-manifest-url", options.ManifestUri.ToString() },
                 { "package-name", options.PackageName },
-                //{ "app-id", options.Name } // If we pass this arg, then Oculus CLI fails with "Erro: APKTool at [name] is not executable", where name is options.Name.
+                //{ "app-id", options.Name } // If we pass this arg, then Oculus CLI fails with "Error: APKTool at [name] is not executable", where name is options.Name.
             };
 
             // Generate an unsigned APK if we're instructed to do so.
