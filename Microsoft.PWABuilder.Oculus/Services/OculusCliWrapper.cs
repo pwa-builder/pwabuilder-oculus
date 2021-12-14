@@ -128,11 +128,11 @@ namespace Microsoft.PWABuilder.Oculus.Services
                 { "android-sdk", appSettings.AndroidSdkPath },
                 { "manifest-content-file", manifestFilePath },
                 { "web-manifest-url", options.ManifestUri.ToString() },
-                { "package-anem", options.Name },
-                { "app-id", options.AppId }
+                { "package-name", options.PackageName },
+                //{ "app-id", options.Name } // If we pass this arg, then Oculus CLI fails with "Erro: APKTool at [name] is not executable", where name is options.Name.
             };
 
-            // Generate a bare APK if we're instructed to do so.
+            // Generate an unsigned APK if we're instructed to do so.
             if (options.SigningKey?.SkipSigning == true)
             {
                 args.Add("skip-sign", string.Empty);
@@ -160,6 +160,7 @@ namespace Microsoft.PWABuilder.Oculus.Services
                 }
                 builder.Append(' ');
             }
+
             return builder.ToString();
         }
     }

@@ -12,10 +12,10 @@ Alternately, you can POST to `/api/package/create` with the following JSON body:
 
 ```json
 {
-	"appId": "com.sadchonks",
+	"packageName": "com.sadchonks",
 	"name": "Sad Chonks",
 	"url": "https://sadchonks.com",
-	"version": "1.0.0.0",
+	"versionCode": 1,
 	"manifestUrl": "https://sadchonks.com/manifest.json",
 	"manifest": {
       "short_name": "Chonks",
@@ -78,3 +78,5 @@ Alternately, you can POST to `/api/package/create` with the following JSON body:
 }
 
 ```
+
+For full set of options for generating an Oculus package, see [OculusAppPackageOptions.cs](https://github.com/pwa-builder/pwabuilder-oculus/blob/main/Microsoft.PWABuilder.Oculus/Models/OculusAppPackageOptions.cs).

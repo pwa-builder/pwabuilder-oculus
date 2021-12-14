@@ -8,7 +8,7 @@
         /// <summary>
         /// The Oculus app ID. 
         /// </summary>
-        public string? AppId { get; set; }
+        public string? PackageName { get; set; }
 
         /// <summary>
         /// The app name. 
@@ -46,9 +46,9 @@
         /// <returns>A validated options instance.</returns>
         public Validated Validate()
         {
-            if (string.IsNullOrWhiteSpace(AppId))
+            if (string.IsNullOrWhiteSpace(PackageName))
             {
-                throw new ArgumentNullException(nameof(AppId));
+                throw new ArgumentNullException(nameof(PackageName));
             }
 
             if (string.IsNullOrWhiteSpace(Name))
@@ -78,11 +78,11 @@
 
             ArgumentNullException.ThrowIfNull(Manifest);
             var validSigningKey = SigningKey?.Validate();
-            return new Validated(AppId, Name, uri, VersionCode.Value, manifestUri, Manifest, validSigningKey);
+            return new Validated(PackageName, Name, uri, VersionCode.Value, manifestUri, Manifest, validSigningKey);
         }
 
         public record Validated(
-            string AppId, 
+            string PackageName, 
             string Name, 
             Uri Uri, 
             int VersionCode, 
