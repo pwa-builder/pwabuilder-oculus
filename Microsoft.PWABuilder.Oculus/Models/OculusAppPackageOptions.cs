@@ -6,9 +6,9 @@
     public class OculusAppPackageOptions
     {
         /// <summary>
-        /// The Oculus app ID. 
+        /// The Oculus app package ID. Usually a reverse-domain style string, e.g. com.myawesomepwa
         /// </summary>
-        public string? PackageName { get; set; }
+        public string? PackageId { get; set; }
 
         /// <summary>
         /// The app name. 
@@ -41,9 +41,9 @@
         /// <returns>A validated options instance.</returns>
         public Validated Validate()
         {
-            if (string.IsNullOrWhiteSpace(PackageName))
+            if (string.IsNullOrWhiteSpace(PackageId))
             {
-                throw new ArgumentNullException(nameof(PackageName));
+                throw new ArgumentNullException(nameof(PackageId));
             }
 
             if (string.IsNullOrWhiteSpace(Name))
@@ -68,11 +68,11 @@
 
             ArgumentNullException.ThrowIfNull(Manifest);
             var validSigningKey = SigningKey?.Validate();
-            return new Validated(PackageName, Name, VersionCode.Value, manifestUri, Manifest, validSigningKey);
+            return new Validated(PackageId, Name, VersionCode.Value, manifestUri, Manifest, validSigningKey);
         }
 
         public record Validated(
-            string PackageName, 
+            string PackageId, 
             string Name, 
             int VersionCode, 
             Uri ManifestUri, 

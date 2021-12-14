@@ -12,7 +12,7 @@ Alternately, you can POST to `/api/packages/create` with the following JSON body
 
 ```json
 {
-	"packageName": "com.sadchonks",
+	"packageId": "com.sadchonks",
 	"name": "Sad Chonks",
 	"versionCode": 1,
 	"manifestUrl": "https://sadchonks.com/manifest.json",

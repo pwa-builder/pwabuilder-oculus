@@ -16,7 +16,7 @@ function setCode(options) {
 
 function getSimpleJson() {
     return {
-        "packageName": "com.webboard",
+        "packageId": "app.webboard",
         "name": "WebBoard",
         "versionCode": 1,
         "manifestUrl": "https://webboard.app/manifest.json",

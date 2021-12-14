@@ -128,7 +128,7 @@ namespace Microsoft.PWABuilder.Oculus.Services
                 { "android-sdk", appSettings.AndroidSdkPath },
                 { "manifest-content-file", manifestFilePath },
                 { "web-manifest-url", options.ManifestUri.ToString() },
-                { "package-name", options.PackageName },
+                { "package-name", options.PackageId },
                 //{ "app-id", options.Name } // If we pass this arg, then Oculus CLI fails with "Error: APKTool at [name] is not executable", where name is options.Name.
             };
 
