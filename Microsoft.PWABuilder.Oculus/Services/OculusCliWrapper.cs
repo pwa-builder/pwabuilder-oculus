@@ -74,20 +74,8 @@ namespace Microsoft.PWABuilder.Oculus.Services
 
         private async Task<string?> WriteSigningKeyToDisk(OculusAppPackageOptions.Validated packageOptions, string outputDirectory)
         {
-            // No signing key options? Then we have nothing to write to disk.
-            if (packageOptions.SigningKey == null)
-            {
-                return null;
-            }
-
-            // Don't have a key store file? Nothing to write to disk.
-            if (string.IsNullOrWhiteSpace(packageOptions.SigningKey.KeyStoreFile))
-            {
-                return null;
-            }
-
-            // If we're configured to skip signing, we have nothing to write to disk.
-            if (packageOptions.SigningKey.SkipSigning)
+            // If we're not configured to use an existing key, well, nothing to write to disk.
+            if (packageOptions.SigningMode != SigningMode.Existing || packageOptions.ExistingSigningKey == null)
             {
                 return null;
             }
@@ -96,7 +84,7 @@ namespace Microsoft.PWABuilder.Oculus.Services
             var keyStorePath = Path.Combine(outputDirectory, $"{Guid.NewGuid()}.keystore");
             try
             {
-                var keyStoreBytes = Convert.FromBase64String(packageOptions.SigningKey.KeyStoreFile);
+                var keyStoreBytes = Convert.FromBase64String(packageOptions.ExistingSigningKey.KeyStoreFile);
                 await File.WriteAllBytesAsync(keyStorePath, keyStoreBytes);
                 return keyStorePath;
             }
@@ -133,18 +121,18 @@ namespace Microsoft.PWABuilder.Oculus.Services
             };
 
             // Generate an unsigned APK if we're instructed to do so.
-            if (options.SigningKey?.SkipSigning == true)
+            if (options.SigningMode == SigningMode.None)
             {
                 args.Add("skip-sign", string.Empty);
             }
 
             // Append signing key information if we've been supplied with one.
-            if (options.SigningKey != null && !string.IsNullOrEmpty(signingKeyFilePath))
+            if (options.SigningMode == SigningMode.Existing && options.ExistingSigningKey != null && !string.IsNullOrEmpty(signingKeyFilePath))
             {
                 args.Add("keystore", signingKeyFilePath);
-                args.Add("ks-pass", options.SigningKey.StorePassword);
-                args.Add("ks-key-alias", options.SigningKey.Alias);
-                args.Add("key-pass", options.SigningKey.Password);
+                args.Add("ks-pass", options.ExistingSigningKey.StorePassword);
+                args.Add("ks-key-alias", options.ExistingSigningKey.Alias);
+                args.Add("key-pass", options.ExistingSigningKey.Password);
             }
 
             var builder = new StringBuilder();

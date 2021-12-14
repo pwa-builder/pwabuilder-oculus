@@ -31,9 +31,14 @@
         public WebAppManifest? Manifest { get; set; }
 
         /// <summary>
-        /// The signing key info. If omitted, a new key will be generated and used to sign the APK.
+        /// The signing configuration, whether to sign the APK with a new signing key, an existing signing key, or to skip signing.
         /// </summary>
-        public SigningKeyInfo? SigningKey { get; set; }
+        public SigningMode SigningMode { get; set; }
+
+        /// <summary>
+        /// The existing signing key. If <see cref="SigningMode"/> is set to <see cref="SigningMode.Existing"/>, this should should be the existing signing key details. Otherwise, this should be null.
+        /// </summary>
+        public SigningKeyInfo? ExistingSigningKey { get; set; }
 
         /// <summary>
         /// Validates the package options. If valid, a <see cref="Validated"/> instance is returned. Otherwise, an exception is thrown.
@@ -66,9 +71,14 @@
                 throw new ArgumentException("Manifest URL must be a valid, absolute URL", nameof(ManifestUrl));
             }
 
+            if (this.SigningMode == SigningMode.Existing && this.ExistingSigningKey == null)
+            {
+                throw new ArgumentNullException(nameof(ExistingSigningKey), "ExistingSigningKey must not be null when SigningMode is set to SigningMode.Existing");
+            }
+
             ArgumentNullException.ThrowIfNull(Manifest);
-            var validSigningKey = SigningKey?.Validate();
-            return new Validated(PackageId, Name, VersionCode.Value, manifestUri, Manifest, validSigningKey);
+            var validSigningKey = ExistingSigningKey?.Validate();
+            return new Validated(PackageId, Name, VersionCode.Value, manifestUri, Manifest, this.SigningMode, validSigningKey);
         }
 
         public record Validated(
@@ -77,6 +87,7 @@
             int VersionCode, 
             Uri ManifestUri, 
             WebAppManifest Manifest,
-            SigningKeyInfo.Validated? SigningKey);
+            SigningMode SigningMode,
+            SigningKeyInfo.Validated? ExistingSigningKey);
     }
 }

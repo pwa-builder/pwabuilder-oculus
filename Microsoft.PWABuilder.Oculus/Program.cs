@@ -38,6 +38,7 @@ var app = builder.Build();
 app.UseDeveloperExceptionPage();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+app.UseCors(allowedOriginsPolicyName);
 app.UseAuthorization();
 app.MapControllers();
 
