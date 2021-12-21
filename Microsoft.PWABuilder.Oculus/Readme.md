@@ -15,10 +15,11 @@ Alternately, you can POST to `/api/packages/create` with the following JSON body
 	"packageId": "com.sadchonks",
 	"name": "Sad Chonks",
 	"versionCode": 1,
+    "versionName": "1.0.0.0",
+    "signingMode": 0, // 0 = unsigned. 1 = create a new signing key. 2 = use existing signing key (must specify existingSigningKey object)
 	"manifestUrl": "https://sadchonks.com/manifest.json",
-    "signingKey": { // Or null to generate a new signing key and sign the APK with it
-        "skipSigning": false, // true to generate an unsigned APK
-        "keyStoreFile": null, // or base64-encoded string of your existing .keystore file
+    "existingSigningKey": {
+        "keyStoreFile": "", // base64-encoded string of your existing .keystore file
         "storePassword": "", 
         "alias": "",
         "password": ""

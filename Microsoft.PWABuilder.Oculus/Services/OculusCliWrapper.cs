@@ -27,15 +27,14 @@ namespace Microsoft.PWABuilder.Oculus.Services
 
         //Pass the manifest file
 
-        public async Task<OculusCliResult> CreateApk(OculusAppPackageOptions.Validated packageOptions, string outputDirectory, string manifestFilePath)
+        public async Task<OculusCliResult> CreateApk(OculusAppPackageOptions.Validated packageOptions, KeystoreFile? keystoreFile, string outputDirectory, string manifestFilePath)
         {
             // Run the Oculus CLI tool.
             ProcessResult procResult;
             var apkPath = Path.Combine(outputDirectory, "output.apk");
             try
             {
-                var signingKeyFilePath = await WriteSigningKeyToDisk(packageOptions, outputDirectory);
-                var processArgs = CreateCommandLineArgs(packageOptions, apkPath, signingKeyFilePath, manifestFilePath);
+                var processArgs = CreateCommandLineArgs(packageOptions, apkPath, keystoreFile, manifestFilePath);
                 procResult = await procRunner.Run(appSettings.OculusCliPath, processArgs, TimeSpan.FromMinutes(5));
             }
             catch (ProcessException procError)
@@ -72,41 +71,18 @@ namespace Microsoft.PWABuilder.Oculus.Services
             };
         }
 
-        private async Task<string?> WriteSigningKeyToDisk(OculusAppPackageOptions.Validated packageOptions, string outputDirectory)
-        {
-            // If we're not configured to use an existing key, well, nothing to write to disk.
-            if (packageOptions.SigningMode != SigningMode.Existing || packageOptions.ExistingSigningKey == null)
-            {
-                return null;
-            }
-
-            // OK, we have a key file. Let's write it to disk.
-            var keyStorePath = Path.Combine(outputDirectory, $"{Guid.NewGuid()}.keystore");
-            try
-            {
-                var keyStoreBytes = Convert.FromBase64String(packageOptions.ExistingSigningKey.KeyStoreFile);
-                await File.WriteAllBytesAsync(keyStorePath, keyStoreBytes);
-                return keyStorePath;
-            }
-            catch (Exception error)
-            {
-                logger.LogError(error, "Error creating key store file for PWA {name} at {url}", packageOptions.Name, packageOptions.ManifestUri);
-                throw;
-            }
-        }
-
         /// <summary>
         /// Creates command line arguments for the Oculus command line tool (ovr-platform-util.exe) from the specified options.
         /// </summary>
         /// <param name="manifestFilePath">The path to the manifest file on disk.</param>
         /// <param name="apkOutputFilePath">The desired file path of the generated APK.</param>
-        /// <param name="signingKeyFilePath">The file path to the signing .keystore file. This will be null if no signing key is required.</param>
+        /// <param name="keystoreFile">The keystore file details for signing the APK, or null if the APK is to be left unsigned.</param>
         /// <param name="options">The Oculus package creation options.</param>
         /// <returns>The command line arguments for the Oculus CLI.</returns>
         protected virtual string CreateCommandLineArgs(
             OculusAppPackageOptions.Validated options, 
             string apkOutputFilePath, 
-            string? signingKeyFilePath,
+            KeystoreFile? keystoreFile,
             string manifestFilePath)
         {
             var args = new Dictionary<string, string?>
@@ -117,22 +93,23 @@ namespace Microsoft.PWABuilder.Oculus.Services
                 { "manifest-content-file", manifestFilePath },
                 { "web-manifest-url", options.ManifestUri.ToString() },
                 { "package-name", options.PackageId },
-                //{ "app-id", options.Name } // If we pass this arg, then Oculus CLI fails with "Error: APKTool at [name] is not executable", where name is options.Name.
+                { "version-code", options.VersionCode.ToString() },
+                { "version-name", options.VersionName }
+                //{ "app-id", options.Name } // TODO: this value is needed to publish to the Store.
             };
 
             // Generate an unsigned APK if we're instructed to do so.
-            if (options.SigningMode == SigningMode.None)
+            if (keystoreFile == null)
             {
                 args.Add("skip-sign", string.Empty);
             }
-
-            // Append signing key information if we've been supplied with one.
-            if (options.SigningMode == SigningMode.Existing && options.ExistingSigningKey != null && !string.IsNullOrEmpty(signingKeyFilePath))
+            else
             {
-                args.Add("keystore", signingKeyFilePath);
-                args.Add("ks-pass", options.ExistingSigningKey.StorePassword);
-                args.Add("ks-key-alias", options.ExistingSigningKey.Alias);
-                args.Add("key-pass", options.ExistingSigningKey.Password);
+                // Otherwise, append a signing key information if we've been supplied with one.
+                args.Add("ks", keystoreFile.Path);
+                args.Add("ks-pass", keystoreFile.StorePassword);
+                args.Add("ks-key-alias", keystoreFile.Alias);
+                args.Add("key-pass", keystoreFile.KeyPassword);
             }
 
             var builder = new StringBuilder();
@@ -140,7 +117,9 @@ namespace Microsoft.PWABuilder.Oculus.Services
             {
                 if (!string.IsNullOrWhiteSpace(arg.Value))
                 {
-                    builder.Append($"--{arg.Key}=\"{arg.Value}\"");
+                    // If the value contains spaces, surround it with quotes.
+                    var value = arg.Value.Contains(' ') ? $"\"{arg.Value}\"" : arg.Value;
+                    builder.Append($"--{arg.Key} {value}");
                 }
                 else
                 {

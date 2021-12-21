@@ -16,6 +16,13 @@
         public string? Name { get; set; }
 
         /// <summary>
+        /// The version display name to use. This can be a proper version, such as "1.0.0.0", or can be a string of your choosing, e.g. "1.0beta2". 
+        /// This is purely for display to end users.
+        /// Oculus Store instead goes by <see cref="VersionCode"/> to determine the true version of your app.
+        /// </summary>
+        public string? VersionName { get; set; }
+
+        /// <summary>
         /// The app version code.
         /// </summary>
         public int? VersionCode { get; set; }
@@ -36,9 +43,9 @@
         public SigningMode SigningMode { get; set; }
 
         /// <summary>
-        /// The existing signing key. If <see cref="SigningMode"/> is set to <see cref="SigningMode.Existing"/>, this should should be the existing signing key details. Otherwise, this should be null.
+        /// The existing signing key. If <see cref="SigningMode"/> is set to <see cref="SigningMode.Existing"/>, this must be the existing signing key details. Otherwise, this should be null.
         /// </summary>
-        public SigningKeyInfo? ExistingSigningKey { get; set; }
+        public ExistingSigningKeyInfo? ExistingSigningKey { get; set; }
 
         /// <summary>
         /// Validates the package options. If valid, a <see cref="Validated"/> instance is returned. Otherwise, an exception is thrown.
@@ -66,6 +73,10 @@
                 throw new ArgumentOutOfRangeException(nameof(VersionCode), VersionCode, "Version code must be greater than zero");
             }
 
+            // Version name, used only for displaying to end users, is optional.
+            // If omitted, we'll use a stringified VersionCode.
+            var versionName = string.IsNullOrWhiteSpace(this.VersionName) ? $"{VersionCode}.0.0.0" : this.VersionName;
+
             if (!Uri.TryCreate(ManifestUrl, UriKind.Absolute, out var manifestUri))
             {
                 throw new ArgumentException("Manifest URL must be a valid, absolute URL", nameof(ManifestUrl));
@@ -78,16 +89,25 @@
 
             ArgumentNullException.ThrowIfNull(Manifest);
             var validSigningKey = ExistingSigningKey?.Validate();
-            return new Validated(PackageId, Name, VersionCode.Value, manifestUri, Manifest, this.SigningMode, validSigningKey);
+            return new Validated(
+                PackageId, 
+                Name, 
+                VersionCode.Value, 
+                versionName,
+                manifestUri, 
+                Manifest, 
+                this.SigningMode, 
+                validSigningKey);
         }
 
         public record Validated(
             string PackageId, 
             string Name, 
             int VersionCode, 
+            string VersionName,
             Uri ManifestUri, 
             WebAppManifest Manifest,
             SigningMode SigningMode,
-            SigningKeyInfo.Validated? ExistingSigningKey);
+            ExistingSigningKeyInfo.Validated? ExistingSigningKey);
     }
 }

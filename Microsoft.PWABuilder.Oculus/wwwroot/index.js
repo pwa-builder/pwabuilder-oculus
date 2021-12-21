@@ -19,6 +19,8 @@ function getSimpleJson() {
         "packageId": "app.webboard",
         "name": "WebBoard",
         "versionCode": 1,
+        "versionName": "1.0.0.0",
+        "signingMode": 1,
         "manifestUrl": "https://webboard.app/manifest.json",
         "manifest": getManifest()
     }

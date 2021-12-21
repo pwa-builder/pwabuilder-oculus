@@ -30,6 +30,7 @@ builder.Services.AddTransient<TempDirectory>();
 builder.Services.AddTransient<ProcessRunner>();
 builder.Services.AddTransient<ZombieProcessKiller>();
 builder.Services.AddTransient<OculusCliWrapper>();
+builder.Services.AddTransient<KeyToolWrapper>();
 builder.Services.AddTransient<OculusPackageCreator>();
 
 var app = builder.Build();
