@@ -104,7 +104,7 @@ namespace Microsoft.PWABuilder.Oculus.Services
             {
                 zipArchive.CreateEntryFromFile(signingKeyDetails.Path, "signing.keystore");
 
-                var keystoreReadme = $"Keep this file and signing.keystore in a safe place. You'll need these files if you want to upload future versions of your PWA to the Oculus Store.\r\n" +
+                var keystoreReadme = "Keep this file and signing.keystore in a safe place. You'll need these files if you want to upload future versions of your PWA to the Oculus Store.\r\n\r\n" +
                     "Key store file: signing.keystore" +
                     $"Keystore password: {signingKeyDetails.StorePassword}\r\n" +
                     $"Key alias: {signingKeyDetails.Alias}\r\n" +

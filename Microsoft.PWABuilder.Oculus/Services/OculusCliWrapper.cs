@@ -35,7 +35,7 @@ namespace Microsoft.PWABuilder.Oculus.Services
             try
             {
                 var processArgs = CreateCommandLineArgs(packageOptions, apkPath, keystoreFile, manifestFilePath);
-                procResult = await procRunner.Run(appSettings.OculusCliPath, processArgs, TimeSpan.FromMinutes(5));
+                procResult = await procRunner.Run(appSettings.OculusCliPath, processArgs, TimeSpan.FromMinutes(5), workingDirectory: outputDirectory);
             }
             catch (ProcessException procError)
             {
@@ -106,10 +106,17 @@ namespace Microsoft.PWABuilder.Oculus.Services
             else
             {
                 // Otherwise, append a signing key information if we've been supplied with one.
-                args.Add("ks", keystoreFile.Path);
-                args.Add("ks-pass", keystoreFile.StorePassword);
+
+                // BUG FIX: Oculus CLI v1.68.0.000001 has a bug where keystore path (ks command line switch)
+                // fails when specifying an absolute path. As a temporary workaround, we set the working directory to outputDirectory 
+                // (see CreateApk function), and thus, we can avoid passing a full absolute path to the signing key.
+                // This workaround should be removed when Oculus CLI fixes this bug.
+                var keystoreFileName = Path.GetFileName(keystoreFile.Path);
+                args.Add("ks", keystoreFileName);
+
+                args.Add("ks-pass", $"pass:{keystoreFile.StorePassword}");
+                args.Add("key-pass", $"pass:{keystoreFile.KeyPassword}");
                 args.Add("ks-key-alias", keystoreFile.Alias);
-                args.Add("key-pass", keystoreFile.KeyPassword);
             }
 
             var builder = new StringBuilder();
