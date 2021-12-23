@@ -14,6 +14,7 @@ namespace Microsoft.PWABuilder.Oculus.Services
         private readonly OculusCliWrapper oculusCli;
         private readonly KeyToolWrapper keyToolWrapper;
         private readonly TempDirectory temp;
+        private readonly Analytics analytics;
         private readonly AppSettings appSettings;
         private readonly ILogger<OculusPackageCreator> logger;
 
@@ -21,12 +22,14 @@ namespace Microsoft.PWABuilder.Oculus.Services
             OculusCliWrapper oculusCli,
             KeyToolWrapper keyTool,
             TempDirectory temp, 
+            Analytics analytics,
             IOptions<AppSettings> appSettings,
             ILogger<OculusPackageCreator> logger)
         {
             this.oculusCli = oculusCli;
             this.keyToolWrapper = keyTool;
             this.temp = temp;
+            this.analytics = analytics;
             this.appSettings = appSettings.Value;
             this.logger = logger;
         }
@@ -37,6 +40,21 @@ namespace Microsoft.PWABuilder.Oculus.Services
         /// <param name="packageOptions">The app packaging options.</param>
         /// <returns>Path to the zip file containing the APK, documentation, and key information.</returns>
         public async Task<string> Create(OculusAppPackageOptions.Validated packageOptions)
+        {
+            try
+            {
+                var zipFilePath = await CreateCore(packageOptions);
+                this.analytics.Record(packageOptions.Uri, true, null);
+                return zipFilePath;
+            }
+            catch (Exception error)
+            {
+                this.analytics.Record(packageOptions.Uri, false, error.ToString());
+                throw;
+            }
+        }
+
+        private async Task<string> CreateCore(OculusAppPackageOptions.Validated packageOptions)
         {
             // Create our temporary output directory.
             var outputDirectory = temp.CreateDirectory();
@@ -52,10 +70,10 @@ namespace Microsoft.PWABuilder.Oculus.Services
 
             // Zip up the APK and the readme doc.
             var zipFilePath = await CreateZipPackage(
-                oculusCliResult.ApkFilePath, 
-                this.appSettings.ReadMePath, 
+                oculusCliResult.ApkFilePath,
+                this.appSettings.ReadMePath,
                 signingKeyDetails,
-                packageOptions.Name, 
+                packageOptions.Name,
                 outputDirectory);
 
             return zipFilePath;

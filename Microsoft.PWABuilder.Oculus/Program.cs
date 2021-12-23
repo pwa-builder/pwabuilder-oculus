@@ -26,7 +26,9 @@ builder.Services.AddCors(options =>
         .AllowAnyMethod());
 });
 builder.Services.AddControllers();
+builder.Services.AddHttpClient();
 builder.Services.AddTransient<TempDirectory>();
+builder.Services.AddTransient<Analytics>();
 builder.Services.AddTransient<ProcessRunner>();
 builder.Services.AddTransient<ZombieProcessKiller>();
 builder.Services.AddTransient<OculusCliWrapper>();

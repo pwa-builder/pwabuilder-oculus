@@ -14,6 +14,7 @@ Alternately, you can POST to `/api/packages/create` with the following JSON body
 {
 	"packageId": "com.sadchonks",
 	"name": "Sad Chonks",
+    "url": "https://sadchonks.com",
 	"versionCode": 1,
     "versionName": "1.0.0.0",
     "signingMode": 0, // 0 = unsigned. 1 = create a new signing key. 2 = use existing signing key (must specify existingSigningKey object)

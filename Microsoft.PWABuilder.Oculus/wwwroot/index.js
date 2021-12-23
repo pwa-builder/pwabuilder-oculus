@@ -18,6 +18,7 @@ function getSimpleJson() {
     return {
         "packageId": "app.webboard",
         "name": "WebBoard",
+        "url": "https://webboard.app",
         "versionCode": 1,
         "versionName": "1.0.0.0",
         "signingMode": 1,

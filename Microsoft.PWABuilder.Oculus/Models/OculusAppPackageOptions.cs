@@ -16,6 +16,11 @@
         public string? Name { get; set; }
 
         /// <summary>
+        /// The URL of the PWA.
+        /// </summary>
+        public string? Url { get; set; }
+
+        /// <summary>
         /// The version display name to use. This can be a proper version, such as "1.0.0.0", or can be a string of your choosing, e.g. "1.0beta2". 
         /// This is purely for display to end users.
         /// Oculus Store instead goes by <see cref="VersionCode"/> to determine the true version of your app.
@@ -73,6 +78,12 @@
                 throw new ArgumentOutOfRangeException(nameof(VersionCode), VersionCode, "Version code must be greater than zero");
             }
 
+            Uri.TryCreate(this.Url, UriKind.Absolute, out var uri);
+            if (uri == null)
+            {
+                throw new ArgumentException("Url must be a valid, absolute URL", nameof(Url));
+            }
+
             // Version name, used only for displaying to end users, is optional.
             // If omitted, we'll use a stringified VersionCode.
             var versionName = string.IsNullOrWhiteSpace(this.VersionName) ? $"{VersionCode}.0.0.0" : this.VersionName;
@@ -92,6 +103,7 @@
             return new Validated(
                 PackageId, 
                 Name, 
+                uri,
                 VersionCode.Value, 
                 versionName,
                 manifestUri, 
@@ -103,6 +115,7 @@
         public record Validated(
             string PackageId, 
             string Name, 
+            Uri Uri,
             int VersionCode, 
             string VersionName,
             Uri ManifestUri, 
