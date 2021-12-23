@@ -103,13 +103,15 @@ Alternately, you can POST to `/api/packages/create` with the following JSON body
 }
 ```
 
-For `signingMode`, 0 = skip signing, 1 = create a new signing key, 2 = use an existing signing key (`existingSigningKey` must be specified).
+For `signingMode`, 0 = skip signing, 1 = create a new signing key, 2 = use an existing signing key (`existingSigningKey` must be specified). See [SigningMode.cs](https://github.com/pwa-builder/pwabuilder-oculus/blob/main/Microsoft.PWABuilder.Oculus/Models/SigningMode.cs) for details.
 
-If `existingSigningKey` is specified, `keyStoreFile` should be a base64-encoded string of your existing .keystore file.
+For `existingSigningKey`, this should be null if you're submitting a new app and don't already have an Android `.keystore` file. If you're uploading a new version of an existing app in Oculus Store or Oculus App Lab, `existingSigningKey` should be the set to the signing key information included in your initial PWABuilder Oculus zip download.
+
+If `existingSigningKey` is specified, `keyStoreFile` should be the base64-encoded string of your existing .keystore file.
 
 For full set of options for generating an Oculus package, see [OculusAppPackageOptions.cs](https://github.com/pwa-builder/pwabuilder-oculus/blob/main/Microsoft.PWABuilder.Oculus/Models/OculusAppPackageOptions.cs).
 
 The generated zip file will contain:
 - The Android App Package (APK) file, ready for upload to the Oculus Store. See [Oculus's PWA app submission documentation](https://developer.oculus.com/documentation/web/pwa-submit-app/).
-- A .keystore file if you set `signingMode` to 1 (meaning new signing key)
+- A .keystore file if you set `signingMode` to 1 (i.e. new signing key)
 - A readme file showing the developer's next steps for uploading their APK file to the Oculus Store.
