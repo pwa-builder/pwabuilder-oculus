@@ -18,13 +18,13 @@ Alternately, you can POST to `/api/packages/create` with the following JSON body
 {
 	"packageId": "com.sadchonks",
 	"name": "Sad Chonks",
-    "url": "https://sadchonks.com",
+	"url": "https://sadchonks.com",
 	"versionCode": 1,
-    "versionName": "1.0.0.0",
-    "signingMode": 0, // 0 = unsigned. 1 = create a new signing key. 2 = use existing signing key (must specify existingSigningKey object)
+	"versionName": "1.0.0.0",
+	"signingMode": 0, 
 	"manifestUrl": "https://sadchonks.com/manifest.json",
-    "existingSigningKey": {
-        "keyStoreFile": "", // base64-encoded string of your existing .keystore file
+	"existingSigningKey": {
+        "keyStoreFile": "", 
         "storePassword": "", 
         "alias": "",
         "password": ""
@@ -90,6 +90,10 @@ Alternately, you can POST to `/api/packages/create` with the following JSON body
 }
 
 ```
+
+For `signingMode`, 0 = skip signing, 1 = create a new signing key, 2 = use an existing signing key (`existingSigningKey` must be specified).
+
+For `existingSigningKey`, `keyStoreFile` should be a base64-encoded string of your existing .keystore file.
 
 For full set of options for generating an Oculus package, see [OculusAppPackageOptions.cs](https://github.com/pwa-builder/pwabuilder-oculus/blob/main/Microsoft.PWABuilder.Oculus/Models/OculusAppPackageOptions.cs).
 
