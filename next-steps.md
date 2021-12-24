@@ -33,15 +33,15 @@ For this step, you'll need:
 
 - An Oculus device, such as an Oculus Quest or newer.
 - A USB-C cable to connect your Oculus device to your PC or Mac.
-- [Oculus Developer Hub app](https://developer.oculus.com/documentation/unity/ts-odh/) for your PC or Mac.
+- The [Oculus Developer Hub app](https://developer.oculus.com/documentation/unity/ts-odh/) for your PC or Mac.
 
 First, verify your Oculus software is up-to-date. Turn on your Oculus device and open `Settings` -> `System` -> `Software Update`.  Your software version should be 31 or greater.
 
 Second, enable Multitasking. In Oculus `Settings`, choose `Experimental`. Then enable `Multitasking`. (Multitasking not visible? It may be enabled already in newer versions of Oculus software.)
 
-Third, install [Oculus Developer Hub (ODH)](https://developer.oculus.com/documentation/unity/ts-odh/) on your PC or Mac. Follow the steps to install and configure ODH to work with your Oculus device.
+Third, install [Oculus Developer Hub (ODH)](https://developer.oculus.com/documentation/unity/ts-odh/) on your PC or Mac. Follow [these steps](https://developer.oculus.com/documentation/unity/ts-odh/) to configure ODH to work with your Oculus device.
 
-Fourth, install your `.apk` PWA package. Open the Oculus Developer Hub (ODH) app on your PC or Mac, go to `My Device` -> `Apps` -> `Upload`. Choose the `.apk` file downloaded from PWABuilder. This will install your PWA onto your Oculus device.
+Fourth, install your PWA package onto your device. Open the Oculus Developer Hub (ODH) app on your PC or Mac, go to `My Device` -> `Apps` -> `Upload`. Choose the `.apk` file you downloaded from PWABuilder. This will install your PWA onto your Oculus device.
 
 Once installed, you can launch your PWA from the `App Library` on your Oculus device. In the `App Library`, change the app filter to `Unknown Sources`, and you should see your app in the list. Click to launch the app.
 
