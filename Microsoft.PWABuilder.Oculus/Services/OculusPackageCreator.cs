@@ -105,7 +105,7 @@ namespace Microsoft.PWABuilder.Oculus.Services
                 zipArchive.CreateEntryFromFile(signingKeyDetails.Path, "signing.keystore");
 
                 var keystoreReadme = "Keep this file and signing.keystore in a safe place. You'll need these files if you want to upload future versions of your PWA to the Oculus Store.\r\n\r\n" +
-                    "Key store file: signing.keystore" +
+                    "Key store file: signing.keystore\r\n" +
                     $"Keystore password: {signingKeyDetails.StorePassword}\r\n" +
                     $"Key alias: {signingKeyDetails.Alias}\r\n" +
                     $"Key password: {signingKeyDetails.KeyPassword}\r\n";
@@ -146,9 +146,17 @@ namespace Microsoft.PWABuilder.Oculus.Services
             var keyStorePath = Path.Combine(outputDirectory, $"{Guid.NewGuid()}.keystore");
             try
             {
-                var keyStoreBytes = Convert.FromBase64String(packageOptions.ExistingSigningKey.KeyStoreFile);
+                // Strip off the "data:application/octet-stream;base64," bit from the beginning.
+                // Otherwise, Convert.FromBase64String will throw an error.
+                var base64Data = packageOptions.ExistingSigningKey.KeyStoreFile.Replace("data:application/octet-stream;base64,", string.Empty);
+                var keyStoreBytes = Convert.FromBase64String(base64Data);
                 await File.WriteAllBytesAsync(keyStorePath, keyStoreBytes);
                 return new KeystoreFile(keyStorePath, packageOptions.ExistingSigningKey.Alias, packageOptions.ExistingSigningKey.Password, packageOptions.ExistingSigningKey.StorePassword);
+            }
+            catch (FormatException base64Error)
+            {
+                logger.LogError(base64Error, "Base64 encoded keystore file was invalid. Raw base64 keystore file data: {data}", packageOptions.ExistingSigningKey.KeyStoreFile);
+                throw;
             }
             catch (Exception error)
             {
