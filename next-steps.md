@@ -3,8 +3,9 @@ You've successfully generated an Oculus app package for your PWA. 😎
 
 Your next steps:
 1. **Read Oculus PWA docs**
-2. **Test your app** on your local Oculus device
-3. **Submit your app package** to the Oculus Store or Oculus App Lab
+2. **Save your signing key** 
+3. **Test your app** on your local Oculus device
+4. **Submit your app package** to the Oculus Store or Oculus App Lab
 
 Each step is explained below.
 
@@ -18,7 +19,15 @@ We strongly recommend reading Oculus' documentation on Oculus PWAs:
 
 This documentation shows you how your app can be used in a VR environment, design principles for Oculus PWAs, how your apps can be discoverable through the Oculus Store or Oculus App Lab, integration into Oculus Home, and the VR/AR capabilities available to PWAs.
 
-## 2. Test your app on your local Oculus device
+## 2. Save your signing key
+
+If your zip file contains a `signing.keystore` file a `signing-key-info.txt` file, save these files in a safe place.
+
+You'll need these files later if you upload a new version of your app to the Oculus Store or Oculus App Lab.
+
+If your zip download didn't contain these files, that means when you generated your Oculus app in PWABuilder, you chose `None` or `Existing` as your signing key.
+
+## 3. Test your app on your local Oculus device
 
 For this step, you'll need:
 
@@ -36,7 +45,7 @@ Fourth, install your `.apk` PWA package. Open the Oculus Developer Hub (ODH) app
 
 Once installed, you can launch your PWA from the `App Library` on your Oculus device. In the `App Library`, change the app filter to `Unknown Sources`, and you should see your app in the list. Click to launch the app.
 
-## 2. Submit your app package to the Oculus Store or Oculus App Lab
+## 4. Submit your app package to the Oculus Store or Oculus App Lab
 
 Now that you've built and tested your PWA Oculus package, you're ready to upload your app package to the Oculus Store or Oculus App Lab.
 
