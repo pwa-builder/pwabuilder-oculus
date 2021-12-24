@@ -25,7 +25,7 @@ If your zip file contains a `signing.keystore` file a `signing-key-info.txt` fil
 
 You'll need these files later if you upload a new version of your app to the Oculus Store or Oculus App Lab.
 
-If your zip download didn't contain these files, that means when you generated your Oculus app in PWABuilder, you chose `None` or `Existing` as your signing key.
+If your zip download didn't contain these files, that means when you generated your Oculus app in PWABuilder, you chose `None` or `Existing` as your signing key option.
 
 ## 3. Test your app on your local Oculus device
 
