@@ -36,7 +36,13 @@ namespace Microsoft.PWABuilder.Oculus.Services
             
             try
             {
-                var keyToolProcOutput = await this.procRunner.Run(appSettings.KeyToolPath, keyToolCommand, TimeSpan.FromMinutes(1));
+                var keyToolPathExpanded = Environment.ExpandEnvironmentVariables(appSettings.KeyToolPath);
+                if (!File.Exists(keyToolPathExpanded))
+                {
+                    throw new FileNotFoundException($"Your appsettings file says keytool.exe exists at {appSettings.KeyToolPath}, but it doesn't. Make sure you've installed Java 1.7 or later.", keyToolPathExpanded);
+                }
+
+                var keyToolProcOutput = await this.procRunner.Run(keyToolPathExpanded, keyToolCommand, TimeSpan.FromMinutes(1));
 
                 // Log warning if there was any error information output by keytool.exe.
                 if (!string.IsNullOrWhiteSpace(keyToolProcOutput.StandardError))

@@ -21,7 +21,7 @@ This documentation shows you how your app can be used in a VR environment, desig
 
 ## 2. Save your signing key
 
-If your zip file contains a `signing.keystore` file a `signing-key-info.txt` file, save these files in a safe place.
+If your zip file contains a `signing.keystore` file and a `signing-key-info.txt` file, save these files in a safe place.
 
 You'll need these files later if you upload a new version of your app to the Oculus Store or Oculus App Lab.
 
@@ -31,13 +31,13 @@ If your zip download didn't contain these files, that means when you generated y
 
 For this step, you'll need:
 
-- An Oculus device, such as an Oculus Quest or newer.
-- A USB-C cable to connect your Oculus device to your PC or Mac.
-- The [Oculus Developer Hub app](https://developer.oculus.com/documentation/unity/ts-odh/) for your PC or Mac.
+- An Oculus device, such as an Oculus Quest 2
+- A USB-C cable to connect your Oculus device to your PC or Mac
+- The [Oculus Developer Hub app](https://developer.oculus.com/documentation/unity/ts-odh/) installed on your PC or Mac
 
 First, verify your Oculus software is up-to-date. Turn on your Oculus device and open `Settings` -> `System` -> `Software Update`.  Your software version should be 31 or greater.
 
-Second, enable Multitasking. In Oculus `Settings`, choose `Experimental`. Then enable `Multitasking`. (Multitasking not visible? It may be enabled already in newer versions of Oculus software.)
+Second, enable Multitasking. In Oculus `Settings`, choose `Experimental`. Then enable `Multitasking`. (Multitasking not listed? It may already be enabled already in newer versions of Oculus software.)
 
 Third, install [Oculus Developer Hub (ODH)](https://developer.oculus.com/documentation/unity/ts-odh/) on your PC or Mac. Follow [these steps](https://developer.oculus.com/documentation/unity/ts-odh/) to configure ODH to work with your Oculus device.
 

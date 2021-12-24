@@ -22,6 +22,7 @@ RUN echo "Unzipping Android Build Tools"
 RUN unzip /app/publish.zip
 
 # TODO: add environment variable for AppSettings:AnalyticsUrl
+# TODO: install Java 1.7 or later
 
 # Bring in the Android dev tools image
 # FROM pwabuilder.azurecr.io/pwa-android-build-box:latest as android-base
