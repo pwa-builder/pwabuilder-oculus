@@ -1,9 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>MicrosoftPWABuilderOculus</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,6 +13,25 @@
 
   <ItemGroup>
 	<None Include="Resources\cli\**" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Resources\sdk\**" />
+    <Content Remove="Resources\sdk\**" />
+    <EmbeddedResource Remove="Resources\sdk\**" />
+    <None Remove="Resources\sdk\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Resources\android-build-tools-30.0.1-windows.zip">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\android-build-tools-windows-30.0.3.zip">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\readme.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
