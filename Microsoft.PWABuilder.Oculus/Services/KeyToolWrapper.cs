@@ -32,7 +32,7 @@ namespace Microsoft.PWABuilder.Oculus.Services
             var storePassword = Guid.NewGuid().ToString().Replace("-", string.Empty);
             var alias = "oculuspwa";
             var outputFilePath = Path.Combine(outputDirectory, $"signing-key.keystore");
-            var keyToolCommand = $"-genkeypair -dname \"{dName}\" -alias {alias} -keypass {keyPassword} -keystore \"{outputFilePath}\" -storepass {storePassword} -validity 20000 -keyalg RSA";
+            var keyToolCommand = $"-genkeypair -dname \"{dName}\" -alias \"{alias}\" -keypass \"{keyPassword}\" -keystore \"{outputFilePath}\" -storepass \"{storePassword}\" -validity 20000 -keyalg RSA";
             
             try
             {

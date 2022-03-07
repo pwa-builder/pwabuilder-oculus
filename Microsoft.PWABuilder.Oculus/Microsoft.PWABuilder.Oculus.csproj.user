@@ -4,4 +4,7 @@
     <NameOfLastUsedPublishProfile>D:\Dev\pwabuilder-oculus\Microsoft.PWABuilder.Oculus\Properties\PublishProfiles\pwabuilder-oculus.pubxml</NameOfLastUsedPublishProfile>
     <ActiveDebugProfile>Docker</ActiveDebugProfile>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebuggerFlavor>ProjectDebugger</DebuggerFlavor>
+  </PropertyGroup>
 </Project>

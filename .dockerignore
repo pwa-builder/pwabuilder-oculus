@@ -1,2 +1,5 @@
 ﻿Microsoft.PWABuilder.Oculus/bin/
 Microsoft.PWABuilder.Oculus/obj/
+
+/bin
+/obj

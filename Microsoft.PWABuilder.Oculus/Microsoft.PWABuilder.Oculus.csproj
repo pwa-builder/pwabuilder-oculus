@@ -16,10 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-	<None Include="Resources\cli\**" CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Remove="Resources\sdk\**" />
     <Content Remove="Resources\sdk\**" />
     <EmbeddedResource Remove="Resources\sdk\**" />
@@ -35,6 +31,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\android-build-tools-windows-30.0.3.zip">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\ovr-platform-util-pwa.zip">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\readme.html">
