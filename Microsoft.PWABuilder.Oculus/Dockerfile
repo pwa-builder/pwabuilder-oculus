@@ -23,6 +23,23 @@ RUN chmod -R 777 /app/
 #
 WORKDIR ./publish
 ENTRYPOINT ["dotnet", "MicrosoftPWABuilderOculus.dll"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## Copy tools over 
 #COPY Resources/ovr-platform-util-pwa.zip .
 #RUN unzip "ovr-platform-util-pwa.zip" 
