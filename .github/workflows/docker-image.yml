@@ -1,0 +1,25 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ linuxdocker ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build the Docker image
+      working-directory: ./Microsoft.PWABuilder.Oculus
+      run: docker build . --file Dockerfile --tag pwabuilder.azurecr.io/pwa-oculus-linux:latest
+      
+    - name: Login
+      working-directory: ./Microsoft.PWABuilder.Oculus
+      run: docker login pwabuilder.azurecr.io -u pwabuilder --password ${{secrets.azure}}
+      
+    - name: Push
+      working-directory: ./Microsoft.PWABuilder.Oculus
+      run: docker push pwabuilder.azurecr.io/pwa-oculus-linux:latest
