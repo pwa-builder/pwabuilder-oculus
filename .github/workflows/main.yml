@@ -16,7 +16,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build the Docker image
       working-directory: ./Microsoft.PWABuilder.Oculus
-      run: docker build . --file Dockerfile --tag pwabuilder.azurecr.io/pwa-oculus-linux:staging
+      run: docker build . --file Dockerfile --tag pwabuilder.azurecr.io/pwa-oculus-linux:production
       
     - name: Login
       working-directory: ./Microsoft.PWABuilder.Oculus
@@ -24,4 +24,4 @@ jobs:
       
     - name: Push
       working-directory: ./Microsoft.PWABuilder.Oculus
-      run: docker push pwabuilder.azurecr.io/pwa-oculus-linux:staging
+      run: docker push pwabuilder.azurecr.io/pwa-oculus-linux:production
