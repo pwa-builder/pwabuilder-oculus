@@ -37,19 +37,18 @@ namespace Microsoft.PWABuilder.Oculus.Services
         /// <summary>
         /// Creates a zip file containing the APK (app package file) and a next steps readme document that shows the developer how to publish the package to the Oculus store.
         /// </summary>
-        /// <param name="packageOptions">The app packaging options.</param>
-        /// <returns>Path to the zip file containing the APK, documentation, and key information.</returns>
-        public async Task<string> Create(OculusAppPackageOptions.Validated packageOptions)
+        /// <param name="packageOptions">The app packaging options.</param>        /// <returns>Path to the zip file containing the APK, documentation, and key information.</returns>
+        public async Task<string> Create(OculusAppPackageOptions.Validated packageOptions, AnalyticsInfo? analyticsInfo)
         {
             try
             {
                 var zipFilePath = await CreateCore(packageOptions);
-                this.analytics.Record(packageOptions.Uri, true, null);
+                this.analytics.Record(packageOptions.Uri, true, null, analyticsInfo, packageOptions);
                 return zipFilePath;
             }
             catch (Exception error)
             {
-                this.analytics.Record(packageOptions.Uri, false, error.ToString());
+                this.analytics.Record(packageOptions.Uri, false, error.ToString(), analyticsInfo, null);
                 throw;
             }
         }

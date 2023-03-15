@@ -8,5 +8,6 @@
         public string ReadMePath { get; set; } = string.Empty;
         public string KeyToolPath { get; set; } = string.Empty;
         public string AnalyticsUrl { get; set; } = string.Empty;
+        public string ApplicationInsightsConnectionString { get; set; } = string.Empty;
     }
 }
