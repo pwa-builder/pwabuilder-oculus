@@ -1,3 +1,4 @@
+using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 using Microsoft.PWABuilder.Oculus.Models;
 using Microsoft.PWABuilder.Oculus.Services;
 
@@ -16,8 +17,10 @@ var allowedOrigins = new[]
     "http://localhost:8000",
     "https://nice-field-047c1420f.azurestaticapps.net"
 };
+var appSettings = builder.Configuration.GetSection("AppSettings");
+var aiOptions = setUpAppInsights(appSettings);
 
-builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
+builder.Services.Configure<AppSettings>(appSettings);
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: allowedOriginsPolicyName, builder => builder
@@ -34,6 +37,8 @@ builder.Services.AddTransient<ZombieProcessKiller>();
 builder.Services.AddTransient<OculusCliWrapper>();
 builder.Services.AddTransient<KeyToolWrapper>();
 builder.Services.AddTransient<OculusPackageCreator>();
+builder.Services.AddApplicationInsightsTelemetry(aiOptions);
+
 
 var app = builder.Build();
 
@@ -46,3 +51,19 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+static ApplicationInsightsServiceOptions setUpAppInsights(IConfigurationSection appSettings)
+{
+    var connectionString = appSettings["ApplicationInsightsConnectionString"];
+    var aiOptions = new ApplicationInsightsServiceOptions();
+    aiOptions.EnableRequestTrackingTelemetryModule = false;
+    aiOptions.EnableDependencyTrackingTelemetryModule = true;
+    aiOptions.EnableHeartbeat = false;
+    aiOptions.EnableAzureInstanceMetadataTelemetryModule = false;
+    aiOptions.EnableActiveTelemetryConfigurationSetup = false;
+    aiOptions.EnableAdaptiveSampling = false;
+    aiOptions.EnableAppServicesHeartbeatTelemetryModule = false;
+    aiOptions.EnableAuthenticationTrackingJavaScript = false;
+    aiOptions.ConnectionString = connectionString;
+    return aiOptions;
+}

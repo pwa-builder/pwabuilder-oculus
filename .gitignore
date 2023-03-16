@@ -12,3 +12,5 @@
 /Microsoft.PWABuilder.Oculus/Resources/sdk
 /Microsoft.PWABuilder.Oculus/output.apk
 /Microsoft.PWABuilder.Oculus/output.apk.idsig
+/Microsoft.PWABuilder.Oculus/Properties/serviceDependencies.local.json.user
+/Microsoft.PWABuilder.Oculus/Microsoft.PWABuilder.Oculus.csproj.user
