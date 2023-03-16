@@ -1,0 +1,33 @@
+
+name: Preview
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [ preview ]
+  
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: microsoft/variable-substitution@v1 
+      with:
+        files: './Microsoft.PWABuilder.Oculus/appsettings.Production.json'
+      env:
+        AppSettings.ApplicationInsightsConnectionString: ${{secrets.APPLICATIONINSIGHTSCONNECTIONSTRING}}
+    - name: Build the Docker image
+      working-directory: ./Microsoft.PWABuilder.Oculus
+      run: docker build . --file Dockerfile --tag pwabuilder.azurecr.io/pwa-oculus-linux:preview
+      
+    - name: Login
+      working-directory: ./Microsoft.PWABuilder.Oculus
+      run: docker login pwabuilder.azurecr.io -u pwabuilder --password ${{secrets.azure}}
+      
+    - name: Push
+      working-directory: ./Microsoft.PWABuilder.Oculus
+      run: docker push pwabuilder.azurecr.io/pwa-oculus-linux:preview
