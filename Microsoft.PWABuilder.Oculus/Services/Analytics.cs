@@ -24,14 +24,7 @@ namespace Microsoft.PWABuilder.Oculus.Services
             this.http = httpClientFactory.CreateClient();
             this.logger = logger;
             this.telemetryClient = telemetryClient;
-            if(!string.IsNullOrEmpty(this.settings.Value.ApplicationInsightsConnectionString))
-            {
-                this.isAppInsightsEnabled = true;
-            }
-            else
-            {
-                this.isAppInsightsEnabled = false;
-            }
+            this.isAppInsightsEnabled = !string.IsNullOrEmpty(this.settings.Value.ApplicationInsightsConnectionString);
         }
 
         /// <summary>
@@ -79,6 +72,10 @@ namespace Microsoft.PWABuilder.Oculus.Services
                 {
                     record.Add("PlatformVersion", analyticsInfo.platformIdVersion);
                 }
+            }
+            if(analyticsInfo?.referrer != null)
+            {
+                record.Add("Referrer", analyticsInfo.referrer);
             }
             telemetryClient.TrackEvent(name, record);
         }
