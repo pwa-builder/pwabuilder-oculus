@@ -4,102 +4,102 @@ This is PWABuilder's Oculus platform. It's used by PWABuilder to generate Oculus
 
 This platform uses the [Oculus CLI](https://developer.oculus.com/documentation/web/pwa-packaging/) to create Oculus app packages from PWAs.
 
-### Running locally
+### Running Locally
 
-Open the Microsoft.PWABuilder.Oculus.sln in Visual Studio 2022. Hit F5 to run the web app. It will launch https://localhost:7115.
+You will need [Docker](https://www.docker.com/products/docker-desktop/) and the [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli) to run this service locally.
 
-To test the package generation, load `https://localhost:7115`, and it will show a page where you can test the service.
+Steps:
+
+1. Run `az acr login -n pwabuilder` to authenticate with our Azure Container Registry.
+
+2. Run `docker build -t pwa-oculus .` to build the Docker image, this may take a while the first time you run it.
+
+4. Once the build is complete, run `docker run -p 80:80 pwa-oculus` to start the Docker container.
+
+5. Visit `localhost` to see the Oculus packaging testing interface.
 
 You can also try the published production service at https://pwabuilder-oculus.centralus.cloudapp.azure.com
 
-Alternately, you can POST to `/api/packages/create` with the following JSON body:
+Alternately, you can POST to `/packages/create` with the following JSON body:
 
 ```json
 {
-  "packageId": "com.sadchonks",
-  "name": "Sad Chonks",
-  "url": "https://sadchonks.com",
-  "versionCode": 1,
-  "versionName": "1.0.0.0",
-  "signingMode": 0,
-  "manifestUrl": "https://sadchonks.com/manifest.json",
-  "existingSigningKey": {
-    "keyStoreFile": "",
-    "storePassword": "",
-    "alias": "",
-    "password": ""
-  },
-  "manifest": {
-    "short_name": "Chonks",
-    "name": "Sad Chonks",
-    "description": "Your daily source for Sad Chonks",
-    "categories": [
-      "cats",
-      "memes"
-    ],
-    "screenshots": [
-      {
-        "src": "/chonkscreenshot1.jpeg",
-        "type": "image/jpeg",
-        "sizes": "728x409",
-        "label": "App on homescreen with shortcuts",
-        "platform": "play"
-      },
-      {
-        "src": "/chonkscreenshot2.jpg",
-        "type": "image/jpeg",
-        "sizes": "551x541",
-        "label": "Really long text describing the screenshot above which is basically a picture showing the app being long pressed on Android and the WebShortcuts popping out",
-        "platform": "xbox"
-      }
-    ],
-    "icons": [
-      {
-        "src": "/favicon.png",
-        "type": "image/png",
-        "sizes": "128x128"
-      },
-      {
-        "src": "/kitteh-192.png",
-        "type": "image/png",
-        "sizes": "192x192"
-      },
-      {
-        "src": "/kitteh-512.png",
-        "type": "image/png",
-        "sizes": "512x512"
-      }
-    ],
-    "start_url": "/saved",
-    "background_color": "#3f51b5",
-    "display": "standalone",
-    "scope": "/",
-    "theme_color": "#3f51b5",
-    "shortcuts": [
-      {
-        "name": "New Chonks",
-        "short_name": "New",
-        "url": "/?shortcut",
+    "packageId": "app.webboard",
+    "name": "WebBoard",
+    "url": "https://webboard.app",
+    "versionCode": 1,
+    "versionName": "1.0.0.0",
+    "signingMode": 1,
+    "manifestUrl": "https://webboard.app/manifest.json",
+    "manifest": {
+        "dir": "ltr",
+        "lang": "en",
+        "name": "Webboard",
+        "scope": "/",
+        "display": "standalone",
+        "start_url": "/",
+        "short_name": "Webboard",
+        "theme_color": "#FFFFFF",
+        "description": "Enhance your work day and solve your cross platform whiteboarding needs with webboard! Draw text, shapes, attach images and more and share those whiteboards with anyone through OneDrive!",
+        "orientation": "any",
+        "background_color": "#FFFFFF",
+        "related_applications": [],
+        "prefer_related_applications": false,
+        "screenshots": [
+            {
+                "src": "assets/screen.png"
+            },
+            {
+                "src": "assets/screen.png"
+            },
+            {
+                "src": "assets/screen.png"
+            }
+        ],
+        "features": [
+            "Cross Platform",
+            "low-latency inking",
+            "fast",
+            "useful AI"
+        ],
+        "shortcuts": [
+            {
+                "name": "Start Live Session",
+                "short_name": "Start Live",
+                "description": "Jump direction into starting or joining a live session",
+                "url": "/?startLive",
+                "icons": [
+                    {
+                        "src": "icons/android/maskable_icon_192.png",
+                        "sizes": "192x192"
+                    }
+                ]
+            }
+        ],
         "icons": [
-          {
-            "src": "/favicon.png",
-            "sizes": "128x128"
-          }
+            {
+                "src": "icons/android/android-launchericon-64-64.png",
+                "sizes": "64x64"
+            },
+            {
+                "src": "icons/android/maskable_icon_192.png",
+                "sizes": "192x192",
+                "purpose": "maskable"
+            },
+            {
+                "src": "icons/android/android-launchericon-48-48.png",
+                "sizes": "48x48"
+            },
+            {
+                "src": "icons/android/android-launchericon-512-512.png",
+                "sizes": "512x512"
+            },
+            {
+                "src": "icons/android/android-launchericon-28-28.png",
+                "sizes": "28x28"
+            }
         ]
-      },
-      {
-        "name": "Saved Chonks",
-        "short_name": "Saved",
-        "url": "/saved?shortcut",
-        "icons": [
-          {
-            "src": "/favicon.png",
-            "sizes": "128x128"
-          }
-        ]
-      }
-    ]
-  }
+    }
 }
 ```
 
