@@ -75,7 +75,7 @@ namespace Microsoft.PWABuilder.Oculus.Services
             }
             if(analyticsInfo?.referrer != null)
             {
-                record.Add("Referrer", analyticsInfo.referrer);
+                record.Add("referrer", analyticsInfo.referrer);
             }
             telemetryClient.TrackEvent(name, record);
         }
